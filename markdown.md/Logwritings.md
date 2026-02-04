@@ -105,3 +105,20 @@ const blank = {};
 console.log("blank type:",typeof blank);
 console.log("blank type:",blank);
 
+
+45- long running operations block execution. enter promises is better, because its cleaner version of callbacks. long runnign operations typically return a promise. typical order is promise-> resolve->reject-> resolve.
+
+46- this chapter we went through different examples of promise codes that we covered in chapter 45. to be honest, this feels more complicated than it probably really is.
+
+47- Async/await for promises. promises can be cleaner but theyre not perfect, can add bloat to code. Async/await is standard for many languages, and syntax is closer to synchronous code. async indicates function will have an await, await "pauses" while operation completes.
+
+48- console.log('Start!!')
+promiseTimeout(2000);
+console.log('Stop!!');
+generally going through examples of await and promise, return to these if stuck
+
+49- packages- a reusable bundle of code and/or assets. they have libraries, tools and shared components and app itself. world's largest software registry is NPM. also CLI bundles with every node.js
+
+50- package management - format includes information like author, lisence, dev dependecies, scripts, ect.
+
+51- gives me several links and resources for whats up next (and for the entire series.)
