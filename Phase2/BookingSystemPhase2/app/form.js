@@ -32,14 +32,14 @@ async function onSubmit(event) {
   const selectedUnit = document.querySelector('input[name="resourcePriceUnit"]:checked')?.value ?? "";
   const priceRaw = $("resourcePrice")?.value ?? "";
   const resourcePrice = priceRaw === "" ? 0 : Number(priceRaw);
-  
+
   const payload = {
     action: actionValue,
     resourceName: $("resourceName")?.value ?? "",
     resourceDescription: $("resourceDescription")?.value ?? "",
-    resourceAvailable: $("resourceAvailable")?.value ?? "",
-    resourcePrice: $("resourcePrice")?.value ?? "",
-    resourcePriceUnit: $("resourcePriceUnit")?.value ?? ""
+    resourceAvailable: $("resourceAvailable")?.checked ?? false,
+    resourcePrice,
+    resourcePriceUnit: selectedUnit
   };
 
   logSection("Sending payload to httpbin.org/post", payload);
