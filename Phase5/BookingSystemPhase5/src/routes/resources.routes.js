@@ -92,8 +92,8 @@ router.post("/", resourceValidators, async (req, res) => {
 
       return res.status(409).json({
         ok: false,
-        error: "Duplicate resourceName",
-        details: "A resource with the same name already exists.",
+        error: "Duplicate Name",
+        details: "A resource with the same name already exists. Please choose another name.",
       });
     }
 
