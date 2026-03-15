@@ -1,4 +1,7 @@
-# 1️⃣ CREATE – RResource (Sequence Diagram)
+Teimme tehtävän Viljamin kanssa yhteistyönä. Palautimme tehtävät erikseen omina palautuksina. Pääsimme tehtävässä oikeasti kyllä miettimään kaikki skenaariot läpi, ja vaati oman ajan :D
+
+
+# 1️⃣ CREATE – Resource (Sequence Diagram)
 
 ```mermaid
 sequenceDiagram
@@ -50,7 +53,7 @@ sequenceDiagram
     F->>B: GET /api/resources
 
     B->>S: getResources()
-    S->>DB: SELECT * FROM resources
+    S->>DB: SELECT * FROM resources or ID
     DB-->>S: Result rows
 
     S-->>B: Resource list
@@ -62,36 +65,42 @@ sequenceDiagram
 
 ```mermaid
 sequenceDiagram
-    participant U as User (Browser)
-    participant F as Frontend (form.js and resources.js)
+    participant U as User
+    participant F as Frontend
     participant B as Backend (Express Route)
     participant V as express-validator
     participant S as Resource Service
     participant DB as PostgreSQL
 
-    U->>F: Edit resource form
-    F->>F: Client-side validation
-    F->>B: PUT /api/resources/:id (JSON)
+    U->>F: Submit edit form
 
-    B->>V: Validate request
-    V-->>B: Validation result
+    F->>F: Client-side validation
 
     alt Validation fails
-        B-->>F: 400 Bad Request + errors[]
-        F-->>U: Show validation message
+        F-->>U: Show validation error
     else Validation OK
-        B->>S: updateResource(id, data)
-        S->>DB: UPDATE resources SET ...
-        DB-->>S: Update result
+        F->>B: PUT /api/resources/:id
 
-        alt Resource not found
-            S-->>B: No rows updated
-            B-->>F: 404 Not Found
-            F-->>U: Show error message
-        else Success
-            S-->>B: Updated resource
-            B-->>F: 200 OK
-            F-->>U: Show success message
+        B->>V: Validate request
+        V-->>B: validation result
+
+        alt Backend validation fails
+            B-->>F: 400 Bad Request
+            F-->>U: Show error
+        else Valid request
+            B->>S: updateResource(data)
+            S->>DB: UPDATE resources
+            DB-->>S: result
+
+            alt Resource updated
+                S-->>B: updated resource
+                B-->>F: 200 OK
+                F-->>U: Show success message
+            else Resource not found
+                S-->>B: no rows updated
+                B-->>F: 404 Not Found
+                F-->>U: Show error
+            end
         end
     end
 ```
