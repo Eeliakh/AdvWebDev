@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reservations | Booking System</title>
+
+    <!-- Tailwind CDN + Brand config -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            primary: "#e10e49",
+                            light: "#ffffff",
+                            dark: "#1e1e1e",
+                            blue: "#263f6a",
+                            green: "#284e36",
+                            orange: "#e37222",
+                            rose: "#c24d52",
+                        }
+                    },
+                    boxShadow: {
+                        soft: "0 8px 40px rgba(0, 0, 0, 0.45)",
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- JS -->
+    <script src="js/reservations.js" defer></script>
+</head>
+
+<body class="min-h-screen flex flex-col bg-brand-light text-brand-dark">
+
+    <!-- Header -->
+    <header class="sticky top-0 z-40 bg-brand-dark text-white shadow-soft">
+        <div class="mx-auto max-w-7xl px-6">
+            <div class="flex h-16 items-center justify-between">
+                <a href="/" class="flex items-center gap-3 flex-1">
+                    <img src="logo.svg" alt="Booking System" class="h-10 w-10">
+                    <div class="leading-tight">
+                        <span class="block text-sm font-semibold">Booking System</span>
+                        <span class="block text-xs text-white/70">Secure resource booking</span>
+                    </div>
+                </a>
+
+                <nav class="flex items-center gap-3">
+                    <a href="/resources" data-auth="user"
+                        class="auth-link rounded-xl border border-white/20 px-4 py-2 text-sm font-semibold hover:bg-white/10 w-40 text-center">
+                        Resources
+                    </a>
+                    <a href="/reservations" data-auth="user"
+                        class="auth-link rounded-xl border border-white/20 px-4 py-2 text-sm font-semibold bg-white/10 w-40 text-center">
+                        Reservations
+                    </a>
+                    <a href="/register" data-auth="guest"
+                        class="auth-link rounded-xl border border-white/20 px-4 py-2 text-sm font-semibold hover:bg-white/10 w-40 text-center">
+                        Register
+                    </a>
+                    <a href="/login" data-auth="guest"
+                        class="auth-link rounded-xl border border-white/20 px-4 py-2 text-sm font-semibold hover:bg-white/10 w-40 text-center">
+                        Sign in
+                    </a>
+                    <button onclick="logout()" data-auth="user"
+                        class="auth-link hidden rounded-xl bg-brand-primary px-4 py-2 text-sm font-semibold text-white w-40 text-center">
+                        Sign out
+                    </button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main id="mainContent" class="mx-auto max-w-7xl px-6 flex-grow">
+
+        <!-- Page header -->
+        <section class="py-12">
+            <div class="rounded-3xl bg-white p-8 shadow-soft">
+                <span class="inline-flex items-center gap-2 rounded-full bg-brand-blue/10 px-4 py-1 text-sm font-semibold text-brand-blue">
+                    Reservation management
+                </span>
+
+                <h1 class="mt-4 text-3xl font-semibold leading-tight">Reservations</h1>
+
+                <p class="mt-2 max-w-2xl text-sm text-black/70">
+                    Create, update, or remove reservations. Select a resource and time slot to book.
+                </p>
+            </div>
+        </section>
+
+        <!-- Form + List -->
+        <section class="pb-16">
+            <div class="grid gap-8 lg:grid-cols-12">
+
+                <!-- Reservation form -->
+                <div class="lg:col-span-8">
+                    <div class="rounded-3xl bg-white p-8 shadow-soft">
+
+                        <h2 class="text-xl font-semibold">Reservation form</h2>
+                        <p class="mt-1 text-sm text-black/60">
+                            Fill in the details below. Use Create for new reservations, Update for existing ones, and Delete to remove.
+                        </p>
+
+                        <div id="reservationMessage"
+                            class="hidden mt-6 rounded-2xl border px-4 py-3 text-sm"
+                            role="alert"></div>
+
+                        <form id="reservationForm" class="mt-8 space-y-6" novalidate>
+                            <input type="hidden" id="reservationId" />
+                            <!-- Piilotettu userId kenttä API:lle -->
+                            <input type="hidden" id="reservationUserId" value="1" />
+
+                            <!-- Resource -->
+                            <div>
+                                <label class="block text-sm font-semibold">Resource</label>
+                                <input id="reservationResource" type="text"
+                                    class="mt-2 w-full rounded-2xl border border-black/10 px-4 py-3 text-sm outline-none focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/30" />
+                            </div>
+
+                            <!-- Reserver (editable) -->
+                            <div>
+                                <label class="block text-sm font-semibold">Reserver</label>
+                                <input id="reservationReserver" type="text"
+                                    class="mt-2 w-full rounded-2xl border border-black/10 px-4 py-3 text-sm outline-none focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/30" />
+                            </div>
+
+                            <!-- Start / End -->
+                            <div class="grid gap-6 lg:grid-cols-2">
+                                <div>
+                                    <label class="block text-sm font-semibold">Start time</label>
+                                    <input id="reservationStart" type="datetime-local"
+                                        class="mt-2 w-full rounded-2xl border border-black/10 px-4 py-3 text-sm" />
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-semibold">End time</label>
+                                    <input id="reservationEnd" type="datetime-local"
+                                        class="mt-2 w-full rounded-2xl border border-black/10 px-4 py-3 text-sm" />
+                                </div>
+                            </div>
+
+                            <!-- Note -->
+                            <div>
+                                <label class="block text-sm font-semibold">Note</label>
+                                <textarea id="reservationNote"
+                                    class="mt-2 w-full rounded-2xl border border-black/10 px-4 py-3 text-sm h-24"></textarea>
+                            </div>
+
+                            <!-- Status (dropdown) -->
+                            <div>
+                                <label class="block text-sm font-semibold mb-2">Status</label>
+                                <select id="reservationStatus"
+                                    class="w-full rounded-2xl border border-black/10 px-4 py-3 text-sm bg-white focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/30">
+                                    <option value="active">Active</option>
+                                    <option value="cancelled">Cancelled</option>
+                                    <option value="completed">Completed</option>
+                                </select>
+                            </div>
+
+                            <!-- Submit button -->
+                            <div class="mt-8">
+                                <button id="reservationSubmit" type="submit"
+                                    class="w-full rounded-2xl bg-brand-primary px-4 py-3 text-center text-sm font-semibold text-white hover:bg-brand-dark/80 transition-all duration-200 ease-out">
+                                    Submit
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Reservation list -->
+                <aside class="lg:col-span-4 space-y-6">
+
+                    <div class="rounded-3xl bg-white p-6 shadow-soft">
+                        <h3 class="font-semibold">Reservation list</h3>
+
+                        <p class="mt-2 text-xs text-black/50">
+                            Click an item to view, edit or delete it.
+                        </p>
+
+                        <div id="reservationList" class="mt-4 space-y-3">
+                            <!-- reservations.js renders items here -->
+                        </div>
+                    </div>
+
+                    <div class="rounded-3xl bg-white p-6 shadow-soft">
+                        <h3 class="font-semibold">Reservation tips</h3>
+                        <ul class="mt-4 space-y-2 text-sm text-black/70">
+                            <li>• Check resource availability before booking</li>
+                            <li>• End time must be after start time</li>
+                            <li>• Add a note to describe the purpose</li>
+                            <li>• Cancel reservations you no longer need</li>
+                        </ul>
+
+                        <a href="index.html"
+                            class="mt-5 inline-block w-full rounded-2xl bg-brand-primary px-4 py-3 text-center text-sm text-white hover:bg-brand-dark/80 transition-all duration-200 ease-out">
+                            Back to homepage
+                        </a>
+                    </div>
+
+                </aside>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-brand-dark text-white">
+        <div class="mx-auto max-w-7xl px-6 py-10">
+            <div class="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+                <div class="flex items-center gap-3">
+                    <img src="logo.svg" alt="Booking System" class="h-8 w-8 opacity-90">
+                    <div class="leading-tight">
+                        <p class="text-sm font-semibold">Booking System</p>
+                        <p class="text-xs text-white/60">Secure resource booking</p>
+                    </div>
+                </div>
+
+                <nav class="flex items-center gap-3 text-sm text-white/70">
+                    <a class="rounded-full px-3 py-1 hover:bg-white/10 hover:text-white transition cursor-not-allowed pointer-events-none">Privacy</a>
+                    <span class="text-white/30">|</span>
+                    <a class="rounded-full px-3 py-1 hover:bg-white/10 hover:text-white transition cursor-not-allowed pointer-events-none">Terms</a>
+                    <span class="text-white/30">|</span>
+                    <a class="rounded-full px-3 py-1 hover:bg-white/10 hover:text-white transition cursor-not-allowed pointer-events-none">Cookies</a>
+                </nav>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById("year").textContent = new Date().getFullYear();
+    </script>
+
+</body>
+
+</html>
