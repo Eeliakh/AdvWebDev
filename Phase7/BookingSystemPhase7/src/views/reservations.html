@@ -32,7 +32,8 @@
     </script>
 
     <!-- JS -->
-    <script src="js/reservations.js" defer></script>
+    <script src="js/form.js" defer></script>
+    <script type="module" src="js/reservations.js" defer></script>
 </head>
 
 <body class="min-h-screen flex flex-col bg-brand-light text-brand-dark">
@@ -117,8 +118,10 @@
                             <!-- Resource -->
                             <div>
                                 <label class="block text-sm font-semibold">Resource</label>
-                                <input id="reservationResource" type="text"
-                                    class="mt-2 w-full rounded-2xl border border-black/10 px-4 py-3 text-sm outline-none focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/30" />
+                                <select id="reservationResourceId"
+    class="mt-2 w-full rounded-2xl border border-black/10 px-4 py-3 text-sm bg-white focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/30">
+</select>
+
                             </div>
 
                             <!-- Reserver (editable) -->
